@@ -1,0 +1,1 @@
+/media/hooman/1tb-ssd-hs3-linu/BucketTracking-Project/hydraulic/keypoints/try0/hydraulic_pose_resnet_18.pb
