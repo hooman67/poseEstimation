@@ -1,7 +1,6 @@
 import os
 import sys
 import argparse
-import json
 import math
 import pprint as pp
 import statistics
@@ -10,7 +9,6 @@ import h5py
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-
 import tensorflow as tf
 from tensorflow import Session
 
@@ -53,6 +51,9 @@ class BoundBox:
             self.score = self.classes[self.get_label()]
 
         return self.score
+
+    def get_json(self):
+        return ([self.xmin, self.xmax, self.ymin, self.ymax, ind_to_label[int(self.label)], str(int(100*self.score))])
 
 class WeightReader:
     def __init__(self, weight_file):
@@ -637,7 +638,14 @@ ind_to_label = {
     3: "MatInside",
     4: "WearArea",
     5: "LipShroud"}
-
+ind_to_label = {
+    0: "Tooth",
+    1: "Toothline",
+    2: "BucketBB",
+    3: "MatInside",
+    4: "WearArea",
+    5: "LipShroud"
+}
 
 def is_object_present(bboxes, class_ind):
     is_present = False
