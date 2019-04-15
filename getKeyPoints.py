@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 from yoloUtil import WmNetRunner
 
 
-inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik/frame3Chan/'
+inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Phukham/frame3Chan/'
 
-outputPredPath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik/yolo_preds/'
+outputPredPath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Phukham/yolo_preds/'
 
 yoloWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/full_yolo_bb_final.h5'
 
@@ -25,12 +25,17 @@ for inImgName in os.listdir(inputImagePath):
 
     mappedKeypoints, outImageKeypoints = wmNetRunner.keypointsPredict(inImage, boxes)
 
-    boxesAr = []
+    teethAr = []
+    bucketAr = [] 
     for bx in boxes:
-        boxesAr.append(bx.get_json())
+        jsonedBox = bx.get_json()
+        if jsonedBox[4] == "Tooth":
+            teethAr.append(jsonedBox)
+        else:
+            bucketAr.append(jsonedBox)
 
-    json2save = [mappedKeypoints, boxesAr]
-    
+    json2save = [mappedKeypoints, teethAr, bucketAr]
+
 
     '''
     print('\n\nsavedJson')
