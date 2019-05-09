@@ -1,5 +1,4 @@
-import os
-import sys
+import os, sys, json
 import argparse
 import math
 import pprint as pp
@@ -26,7 +25,7 @@ import torchvision.transforms as transf
 
 
 class BoundBox:
-    def __init__(self, xmin, ymin, xmax, ymax, c=None, classes=None, label=-1):
+    def __init__(self, xmin, ymin, xmax, ymax, c=None, classes=None, label=-1, score=-1):
         self.xmin = xmin
         self.ymin = ymin
         self.xmax = xmax
@@ -36,7 +35,7 @@ class BoundBox:
         self.classes = classes
 
         self.label = label
-        self.score = -1
+        self.score = score
 
         self.filtered = False
 
@@ -54,6 +53,10 @@ class BoundBox:
 
     def get_json(self):
         return ([self.xmin, self.xmax, self.ymin, self.ymax, ind_to_label[int(self.label)], str(int(100*self.score))])
+
+    def __str__(self): 
+        return str(self.xmin,) + '   ' + str(self.xmax) + '   ' + str(self.ymin) + '   ' + str(self.ymax) + '   ' + str(self.c) + '   ' + str(self.label) + '   ' + str(self.classes) + '   ' + str(str(self.score))
+
 
 class WeightReader:
     def __init__(self, weight_file):
@@ -1022,6 +1025,11 @@ def draw_keypoints(image, keypoints, circle_radius=3):
     """ Draw keypoints on the full image."""
     colors = [[128, 0, 128], [0, 255, 0], [0, 0, 255], [255, 0, 0], [153, 255, 255],
               [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+    #print('\ndraw_keypoints')
+    #print(keypoints)
+    #print('\n\n')
+
     for patch_keypoints in keypoints:
         if patch_keypoints == []: continue
         for i, joint_keypoint in enumerate(patch_keypoints):
@@ -1138,7 +1146,7 @@ def tf_predict_on_images(images, sess, x, y, image_w, image_h):
 
 
 class WmNetRunner(object):
-    def __init__(self, yoloWeights, keypointsWeights):
+    def __init__(self, keypointsWeights, yoloWeights=None, ssdPredsDir=None):
         self.obj_thresh = 0.2
         self.class_obj_threshold = [0.5, 0.5, 0.4, 0.4, 0.4]
         self.nms_threshold=0.01
@@ -1153,18 +1161,21 @@ class WmNetRunner(object):
         self.patch_w, self.patch_h = 96, 192
 
 
+        if yoloWeights:
+            ###############################
+            #   Load the yolo model 
+            self.yolo = YOLO(
+                input_size         = self.input_size, 
+                labels             = self.labels, 
+                max_box_per_image  = self.max_box_per_image,
+                anchors            = self.anchors)
 
-        ###############################
-        #   Load the yolo model 
-        self.yolo = YOLO(
-            input_size         = self.input_size, 
-            labels             = self.labels, 
-            max_box_per_image  = self.max_box_per_image,
-            anchors            = self.anchors)
+            self.yolo.load_weights(yoloWeights)
+            ###############################
 
-        self.yolo.load_weights(yoloWeights)
-        ###############################
 
+        if ssdPredsDir:
+            self.ssdPredsDir = ssdPredsDir
 
 
         ###############################
@@ -1205,3 +1216,24 @@ class WmNetRunner(object):
         outImageKeypoints = draw_keypoints(inImage, mapped_keypoints, circle_radius=3)
 
         return mapped_keypoints, outImageKeypoints
+
+    def getBoxesFromSsdPreds(self, jsonName, inImage):
+        boxes = []
+
+        with open(self.ssdPredsDir + jsonName, 'r') as fjson:
+            data = tuple(json.load(fjson))
+            
+            for el in data:
+
+                if el[4] == 'teethLine':
+                    aBox = BoundBox(el[0], el[2], el[1], el[3], c=1, classes=[0, 1.0, 0, 0, 0], label=1, score= el[3])
+
+                if el[4] == 'tooth':
+                    aBox = BoundBox(el[0], el[2], el[1], el[3], c=0, classes=[1.0, 0, 0, 0, 0], label=0, score= el[3])
+                    
+                boxes.append(aBox)
+
+
+        image = draw_boxes(inImage, boxes, labels=self.labels, score_threshold=self.obj_thresh) 
+
+        return boxes, image
