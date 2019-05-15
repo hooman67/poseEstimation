@@ -1,21 +1,29 @@
 import os, cv2, json
 import numpy as np
 import matplotlib.pyplot as plt
-from yoloUtil import WmNetRunner
 
 
-inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Liebherr/frame3Chan/'
+shovelType = 'cable'
 
-outputPredPath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Liebherr/temp/'
+inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH03_2800/Frame/'
 
-keypointsWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/hydraulic_pose_resnet_18.pb'
+outputPredPath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH03_2800/yolo_preds/'
 
-useSSD_insteadOfYolo = True
+keypointsWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/cable_pose_resnet_18.pb'
 
-yoloWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/full_yolo_bb_final.h5'
+useSSD_insteadOfYolo = False
+
+yoloWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/cable_full_yolo_bb_cable_final.h5'
 
 ssdPredsDir = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Liebherr/ssd_preds/'
 
+
+if shovelType == 'hydraulic':
+    from yoloUtil_hydraulics import WmNetRunner
+elif shovelType == 'cable':
+    from yoloUtil_cables import WmNetRunner
+else:
+    print('No shovel type specified')
 
 
 
