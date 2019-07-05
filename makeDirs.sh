@@ -8,6 +8,9 @@ mkdir rejectedCurves
 mkdir rejectedLandmakrs
 mkdir rejected_notAllTeeth
 mkdir rejected_notEnoughLandmarks
+mkdir referenceFrames
+mkdir referenceFrames/images
+mkdir referenceFrames/labels
 mkdir t1
 mkdir t2
 mkdir t3
