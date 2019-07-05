@@ -5,6 +5,7 @@ mkdir finalVis
 mkdir finalVisBeforeRegisteration
 mkdir rejected_badRatio
 mkdir rejectedCurves
+mkdir rejectedLandmakrs
 mkdir rejected_notAllTeeth
 mkdir rejected_notEnoughLandmarks
 mkdir t1
