@@ -406,9 +406,10 @@ def getSelectedForPlotting(endIndex):
 
 
 class hsCanvesDrawer:
-    def __init__(self, points, lines, path2wmsDir, path2visFinal):
+    def __init__(self, points, lines, images, path2wmsDir, path2visFinal):
         self.lines = lines
         self.points = points
+        self.images = images
 
         self.cid = lines.figure.canvas.mpl_connect('button_press_event', self)
 
@@ -444,14 +445,16 @@ class hsCanvesDrawer:
                 image = cv2.imread( self.path2wmsDir + imageName)
 
 
-            #plt.imshow(image)
+            
             self.lines.figure.canvas.draw()
             self.points.figure.canvas.draw()
+            self.images.imshow(image)
 
 
 
         else:
             plt.close()
+
 
 
 
@@ -465,20 +468,20 @@ ax.grid()
 plt.xlabel('Hours')
 plt.xlabel('Pixels')
 
-#ax = fig.add_subplot(111)
+ax1 = fig.add_subplot(111)
 #ax.set_title('click to build line segments')
-points, lines = plt.plot([], [], 'o', [], [])
+#points, lines = plt.plot([], [], 'o', [], [])
+points, lines = ax1.plot([], [], 'o', [], [])
 
 
-linebuilder = hsCanvesDrawer(points, lines, wmsDir, path2visFinal)
+ax2 = fig.add_subplot(211)
+#images, = ax2.plot([], [])
+
+
+#linebuilder = hsCanvesDrawer(points, lines, images, wmsDir, path2visFinal)
+linebuilder = hsCanvesDrawer(points, lines, ax2, wmsDir, path2visFinal)
 
 plt.show()
-
-
-
-
-
-
 
 
 
