@@ -406,11 +406,11 @@ def getSelectedForPlotting(endIndex):
 
 
 class hsCanvesDrawer:
-    def __init__(self, line, path2wmsDir, path2visFinal):
-        self.line = line
-        self.xs = list(line.get_xdata())
-        self.ys = list(line.get_ydata())
-        self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
+    def __init__(self, points, lines, path2wmsDir, path2visFinal):
+        self.lines = lines
+        self.points = points
+
+        self.cid = lines.figure.canvas.mpl_connect('button_press_event', self)
 
         self.path2wmsDir = path2wmsDir
         self.path2visFinal = path2visFinal
@@ -424,10 +424,7 @@ class hsCanvesDrawer:
 
     def __call__(self, event):
         print('click', event)
-        if event.inaxes!=self.line.axes: return
-        self.xs.append(event.xdata)
-        self.ys.append(event.ydata)
-        #self.line.set_data(self.xs, self.ys)
+        if event.inaxes!=self.lines.axes: return
 
 
         if self.currentIndex < self.lastIndex:
@@ -437,9 +434,10 @@ class hsCanvesDrawer:
             if os.path.exists(self.path2visFinal + imageName):
                 image = cv2.imread( self.path2visFinal + imageName)
 
-
                 selectedLengths, selectedTimes, selectedConfidence = getSelectedForPlotting(self.currentIndex)
-                self.line.set_data(selectedTimes, selectedLengths)
+                
+                self.lines.set_data(selectedTimes, selectedLengths)
+                self.points.set_data(selectedTimes, selectedLengths)
 
 
             else:
@@ -447,7 +445,8 @@ class hsCanvesDrawer:
 
 
             #plt.imshow(image)
-            self.line.figure.canvas.draw()
+            self.lines.figure.canvas.draw()
+            self.points.figure.canvas.draw()
 
 
 
@@ -468,10 +467,10 @@ plt.xlabel('Pixels')
 
 #ax = fig.add_subplot(111)
 #ax.set_title('click to build line segments')
-#line, = ax.plot([0], [0])  # empty line
-line, = plt.plot([0], [0]) 
+points, lines = plt.plot([], [], 'o', [], [])
 
-linebuilder = hsCanvesDrawer(line, wmsDir, path2visFinal)
+
+linebuilder = hsCanvesDrawer(points, lines, wmsDir, path2visFinal)
 
 plt.show()
 
@@ -486,88 +485,49 @@ plt.show()
 
 '''
             
-
-
-
-
     plotTitle = str(resKey + '__' + str(toothNbKey) + '__' + regTypeKeyWord + '__' + infoKey + '__'+ refKey)
     plt.title(plotTitle)
-
     plt.plot(selectedTimes, selectedLengths, label='nbOfPoints: ' + str(len(selectedLengths)))
-
     plt.plot(selectedTimes, selectedLengths,'o')
-
-
-
     for i in range(len(selectedTimes)):
         ax.annotate( round(selectedConfidence[i], 1), (selectedTimes[i], selectedLengths[i]) )
         
         
-
     ax.legend()
-
     plt.savefig(path2savePlots + plotTitle + '.png')
-
-
-
-
-
-
-
-
-
 class hsCanvesDrawer:
     def __init__(self, line, path2wmsDir, path2visFinal):
         self.line = line
         self.xs = list(line.get_xdata())
         self.ys = list(line.get_ydata())
         self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
-
         self.path2wmsDir = path2wmsDir
         self.path2visFinal = path2visFinal
         self.resultsKey = list(finalResultsDict.keys())[0]
-
         self.timesList = sorted(finalResultsDict[self.resultsKey].keys())
         self.currentIndex = 0
         self.lastIndex = len(self.timesList)
-
-
-
     def __call__(self, event):
         print('click', event)
         if event.inaxes!=self.line.axes: return
         self.xs.append(event.xdata)
         self.ys.append(event.ydata)
         #self.line.set_data(self.xs, self.ys)
-
-
         if self.currentIndex < self.lastIndex:
             imageName = finalResultsDict[self.resultsKey][self.timesList[self.currentIndex]]['fileName'].split('/')[-1]
             self.currentIndex+=1
-
             if os.path.exists(self.path2visFinal + imageName):
                 image = cv2.imread( self.path2visFinal + imageName)
             else:
                 image = cv2.imread( self.path2wmsDir + imageName)
-
-
             plt.imshow(image)
             self.line.figure.canvas.draw()
-
-
-
         else:
             plt.close()
-
-
-
-
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_title('click to build line segments')
 line, = ax.plot([0], [0])  # empty line
-
 linebuilder = hsCanvesDrawer(line, wmsDir, path2visFinal)
-
 plt.show()
 '''
