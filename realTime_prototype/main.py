@@ -606,20 +606,30 @@ plt.show()
 
 
 plt.show()
-fig, axs = plt.subplots(3, figsize=(30,10))
+fig, axs = plt.subplots(4, figsize=(30,10))
 
 
 axs[0].set_xlim(0, 250)
 axs[0].set_ylim(10, 40)
+axs[0].grid()
+axs[0].set_ylabel('Pixels')
 points, lines = axs[0].plot([], [], 'o', [], [])
 
 
 axs[1].set_xlim(0, 250)
 axs[1].set_ylim(10, 40)
+axs[1].grid()
 points_smooth, lines_smooth = axs[1].plot([], [], 'o', [], [])
 
 
-images = axs[2]
+axs[2].set_xlim(0, 250)
+axs[2].set_ylim(10, 40)
+axs[2].grid()
+axs[2].set_xlabel('Hours')
+points_smooth2, lines_smooth2 = axs[2].plot([], [], 'o', [], [])
+
+
+images = axs[3]
 
 
 
@@ -633,13 +643,7 @@ timesList = sorted(finalResultsDict[resultsKey].keys())
 currentIndex = 0
 lastIndex = len(timesList)
 
-
-
-
-
 while 1:
-
-
     if currentIndex < lastIndex:
 
         currentTime = timesList[currentIndex]
@@ -667,6 +671,13 @@ while 1:
             points_smooth.set_ydata(smoothedLengths)
 
 
+            lines_smooth2.set_xdata(smoothed2Times)
+            lines_smooth2.set_ydata(smoothed2Lengths)
+
+            points_smooth2.set_xdata(smoothed2Times)
+            points_smooth2.set_ydata(smoothed2Lengths)
+
+
         else:
             image = cv2.imread( path2wmsDir + imageName)
 
@@ -681,3 +692,5 @@ while 1:
 
     else:
         break
+
+plt.show()
