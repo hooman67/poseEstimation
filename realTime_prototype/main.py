@@ -326,6 +326,15 @@ lengthsAndLandmarksDict = getAllLengthsAndLandmarks(
 
 
 
+
+
+
+
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
 resKey_glb = list(lengthsAndLandmarksDict.keys())[0]
 toothNbKey_glb = 'tooth_' + str(0 + 1) + '_info'  
 regTypeKeyWord_glb = 'rigid_keypointsForTooth_'
@@ -389,10 +398,6 @@ def getSelectedFinalLengths(endIndex):
 
 
     return selectedLengths, selectedTimes, selectedConfidence
-
-
-
-
 
 
 def getSelectedSmoothedLengths(endIndex):
@@ -495,6 +500,109 @@ def getSelectedSmoothedLengths(endIndex):
 
 
     return     smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence
+
+
+
+
+
+plt.show()
+fig, axs = plt.subplots(4, figsize=(30,10))
+
+
+axs[0].set_xlim(0, 250)
+axs[0].set_ylim(10, 40)
+axs[0].grid()
+axs[0].set_ylabel('Pixels')
+points, lines = axs[0].plot([], [], 'o', [], [])
+
+
+axs[1].set_xlim(0, 250)
+axs[1].set_ylim(10, 40)
+axs[1].grid()
+points_smooth, lines_smooth = axs[1].plot([], [], 'o', [], [])
+
+
+axs[2].set_xlim(0, 250)
+axs[2].set_ylim(10, 40)
+axs[2].grid()
+axs[2].set_xlabel('Hours')
+points_smooth2, lines_smooth2 = axs[2].plot([], [], 'o', [], [])
+
+
+images = axs[3]
+
+
+
+
+
+path2wmsDir = wmsDir
+path2visFinal = path2visFinal
+resultsKey = list(finalResultsDict.keys())[0]
+
+#timesList = sorted(finalResultsDict[resultsKey].keys())
+#timesList = list(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb]['all_times_list'])
+timesList = sorted(paresedResultsDict[resultsKey].keys())
+currentIndex = 0
+lastIndex = len(timesList)
+
+while 1:
+    if currentIndex < lastIndex:
+
+        currentTime = timesList[currentIndex]
+        imageName = paresedResultsDict[resultsKey][currentTime]['fileName'].split('/')[-1]
+
+        if currentTime in lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times']:
+            image = cv2.imread( path2visFinal + imageName)
+
+
+            selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(currentIndex)
+            smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence = getSelectedSmoothedLengths(currentIndex)
+                
+            
+            lines.set_xdata(selectedTimes)
+            lines.set_ydata(selectedLengths)
+
+            points.set_xdata(selectedTimes)
+            points.set_ydata(selectedLengths)
+
+
+            lines_smooth.set_xdata(smoothedTimes)
+            lines_smooth.set_ydata(smoothedLengths)
+
+            points_smooth.set_xdata(smoothedTimes)
+            points_smooth.set_ydata(smoothedLengths)
+
+
+            lines_smooth2.set_xdata(smoothed2Times)
+            lines_smooth2.set_ydata(smoothed2Lengths)
+
+            points_smooth2.set_xdata(smoothed2Times)
+            points_smooth2.set_ydata(smoothed2Lengths)
+
+
+        else:
+            image = cv2.imread( path2wmsDir + imageName)
+
+
+        currentIndex+=1
+
+        images.imshow(image)
+
+        plt.draw()
+        plt.pause(1e-17)
+
+
+    else:
+        break
+
+plt.show()
+
+
+
+
+
+
+
 
 
 
@@ -602,95 +710,3 @@ linebuilder = hsCanvesDrawer(points, lines, ax2, points_smooth, lines_smooth, po
 
 plt.show()
 '''
-
-
-
-plt.show()
-fig, axs = plt.subplots(4, figsize=(30,10))
-
-
-axs[0].set_xlim(0, 250)
-axs[0].set_ylim(10, 40)
-axs[0].grid()
-axs[0].set_ylabel('Pixels')
-points, lines = axs[0].plot([], [], 'o', [], [])
-
-
-axs[1].set_xlim(0, 250)
-axs[1].set_ylim(10, 40)
-axs[1].grid()
-points_smooth, lines_smooth = axs[1].plot([], [], 'o', [], [])
-
-
-axs[2].set_xlim(0, 250)
-axs[2].set_ylim(10, 40)
-axs[2].grid()
-axs[2].set_xlabel('Hours')
-points_smooth2, lines_smooth2 = axs[2].plot([], [], 'o', [], [])
-
-
-images = axs[3]
-
-
-
-
-
-path2wmsDir = wmsDir
-path2visFinal = path2visFinal
-resultsKey = list(finalResultsDict.keys())[0]
-
-timesList = sorted(finalResultsDict[resultsKey].keys())
-currentIndex = 0
-lastIndex = len(timesList)
-
-while 1:
-    if currentIndex < lastIndex:
-
-        currentTime = timesList[currentIndex]
-        imageName = finalResultsDict[resultsKey][currentTime]['fileName'].split('/')[-1]
-
-        if currentTime in lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times']:
-            image = cv2.imread( path2visFinal + imageName)
-
-
-            selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(currentIndex)
-            smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence = getSelectedSmoothedLengths(currentIndex)
-                
-            
-            lines.set_xdata(selectedTimes)
-            lines.set_ydata(selectedLengths)
-
-            points.set_xdata(selectedTimes)
-            points.set_ydata(selectedLengths)
-
-
-            lines_smooth.set_xdata(smoothedTimes)
-            lines_smooth.set_ydata(smoothedLengths)
-
-            points_smooth.set_xdata(smoothedTimes)
-            points_smooth.set_ydata(smoothedLengths)
-
-
-            lines_smooth2.set_xdata(smoothed2Times)
-            lines_smooth2.set_ydata(smoothed2Lengths)
-
-            points_smooth2.set_xdata(smoothed2Times)
-            points_smooth2.set_ydata(smoothed2Lengths)
-
-
-        else:
-            image = cv2.imread( path2wmsDir + imageName)
-
-
-        currentIndex+=1
-
-        images.imshow(image)
-
-        plt.draw()
-        plt.pause(1e-17)
-
-
-    else:
-        break
-
-plt.show()
