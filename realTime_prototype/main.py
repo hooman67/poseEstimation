@@ -605,20 +605,19 @@ plt.show()
 
 
 
-xdata = []
-ydata = []
-
 plt.show()
+fig, axs = plt.subplots(3, figsize=(30,10))
 
-fig, axs = plt.subplots(3)
 
 axs[0].set_xlim(0, 250)
-axs[0].set_ylim(-50, +50)
-lines, = axs[0].plot(xdata, xdata)
+axs[0].set_ylim(10, 40)
+points, lines = axs[0].plot([], [], 'o', [], [])
+
 
 axs[1].set_xlim(0, 250)
-axs[1].set_ylim(-50, +50)
-points, = axs[1].plot(xdata, xdata)
+axs[1].set_ylim(10, 40)
+points_smooth, lines_smooth = axs[1].plot([], [], 'o', [], [])
+
 
 images = axs[2]
 
@@ -651,13 +650,22 @@ while 1:
 
 
             selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(currentIndex)
-
+            smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence = getSelectedSmoothedLengths(currentIndex)
+                
             
             lines.set_xdata(selectedTimes)
             lines.set_ydata(selectedLengths)
 
             points.set_xdata(selectedTimes)
             points.set_ydata(selectedLengths)
+
+
+            lines_smooth.set_xdata(smoothedTimes)
+            lines_smooth.set_ydata(smoothedLengths)
+
+            points_smooth.set_xdata(smoothedTimes)
+            points_smooth.set_ydata(smoothedLengths)
+
 
         else:
             image = cv2.imread( path2wmsDir + imageName)
