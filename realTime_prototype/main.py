@@ -1,4 +1,5 @@
 import sys
+import time as tt
 
 # This is needed if the notebook is stored in the object_detection folder.
 sys.path.append(".")
@@ -325,70 +326,64 @@ lengthsAndLandmarksDict = getAllLengthsAndLandmarks(
 
 
 
+resKey_glb = list(lengthsAndLandmarksDict.keys())[0]
+toothNbKey_glb = 'tooth_' + str(0 + 1) + '_info'  
+regTypeKeyWord_glb = 'rigid_keypointsForTooth_'
+refKey_glb = 'WMDL_2018.09.11_06.21.57'
+infoKey_glb = 'all_tt2ls_dict'
 
 
-
-
-def getSelectedForPlotting(endIndex):
+def getSelectedFinalLengths(endIndex):
     minAllowedConfidence = 0.7  #1 to 5 for conf1 --- 0-1 for conf 2 and 3
     filterBasedOnConf = 2    # 1 for conf1 2 for conf2, 3 for logConf
 
-
-    path2savePlots = mainPath + 'finalPlots/'
-    resKey = list(lengthsAndLandmarksDict.keys())[0]
-    toothNbKey = 'tooth_' + str(0 + 1) + '_info'  
-    regTypeKeyWord = 'rigid_keypointsForTooth_'
-    refKey = 'WMDL_2018.09.11_06.21.57'
-    infoKey = 'all_tt2ls_dict'
-
-        
 
     #filter based on Confidence
     selectedLengths = []
     selectedTimes = []
     selectedConfidence = []
 
-    #for i in range(len(lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['times'])):
+    #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
     for i in range(0, endIndex, 1):
 
         if filterBasedOnConf == 1:
-            if lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['confidences'][i] >= minAllowedConfidence:
+            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
 
                 selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['lengths'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
                 )
                 selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['times'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
                 )
                 selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['confidences'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
                 )
                 
         elif filterBasedOnConf == 2:
-            if lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['secondaryConfidences'][i] >= minAllowedConfidence:
+            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i] >= minAllowedConfidence:
 
                 selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['lengths'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
                 )
                 selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['times'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
                 )
                 selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['secondaryConfidences'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i]
                 )
                 
                 
         elif filterBasedOnConf == 3:
-            if lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['logConfidence'][i] >= minAllowedConfidence:
+            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i] >= minAllowedConfidence:
 
                 selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['lengths'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
                 )
                 selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['times'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
                 )
                 selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey][regTypeKeyWord][refKey][toothNbKey][infoKey]['logConfidence'][i]
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i]
                 )
 
 
@@ -400,16 +395,120 @@ def getSelectedForPlotting(endIndex):
 
 
 
+def getSelectedSmoothedLengths(endIndex):
+    minAllowedConfidence = 1# used value of 1 for cable and for hydraulic. So we basically allow all confidences
+    minAllowedConfidence2ndSmoothing = 4 # used value of 7 for cable. 4 for hydraulic. This is the number of points withing the time window
+
+    timeWindowLength = 2
+
+    verbose = False
+
+
+    ########################################################################################
+    #filter based on Confidence (# of detected landmarks)
+    selectedTimes = []
+    selectedLengths = []
+    selectedConfidence = []
+
+    #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
+    for i in range(0, endIndex, 1):
+        if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
+
+            selectedTimes.append(
+                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
+            )
+        
+            selectedLengths.append(
+                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
+            )
+
+            selectedConfidence.append(
+                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
+            )
+    ########################################################################################
+
+
+    ########################################################################################
+    #smooth out the selected lengths
+    smoothedTimes = []
+    smoothedLengths = []
+    smoothedConfidence = []
+
+    timeRange_lowerBound = 0
+
+    if len(selectedTimes) > 0:
+        lastUpperBound = math.ceil( max(selectedTimes) )
+    else:
+        lastUpperBound = 0
+
+    for timeRange_upperBound in range(timeWindowLength, lastUpperBound, timeWindowLength):
+
+        timeIndices = [i for i,x in enumerate(selectedTimes) if (x >= timeRange_lowerBound and x < timeRange_upperBound)]
+        
+        if verbose:
+            print('timeRange_lowerBound:'  + str(timeRange_lowerBound))
+            print('timeRange_upperBound:'  + str(timeRange_upperBound))
+            print('timeIndices:'  + str(timeIndices))
+        
+        
+        if len(timeIndices) > 0:
+            npIndices = np.array(timeIndices)
+            npTimes = np.array(selectedTimes)
+            npLengths = np.array(selectedLengths)
+            
+            smoothedTimes.append(npTimes[npIndices].mean())
+            smoothedLengths.append(npLengths[npIndices].mean())
+            smoothedConfidence.append(len(timeIndices))
+            
+            if verbose:
+                print('\nmeantime')
+                print(npTimes[npIndices].mean())
+                print('\nmeanLengths')
+                print(npLengths[npIndices].mean())
+                print('\n')
+
+
+        timeRange_lowerBound = timeRange_upperBound
 
 
 
 
+    ########################################################################################
+    #secondary smoothing based on Confidence2 (# of logs in timeWindow)
+    smoothed2Times = []
+    smoothed2Lengths = []
+    smoothed2Confidence = []
 
+    for i in range(len(smoothedTimes)):
+        if smoothedConfidence[i] >= minAllowedConfidence2ndSmoothing:
+            
+            smoothed2Times.append(
+                smoothedTimes[i]
+            )
+            smoothed2Lengths.append(
+                smoothedLengths[i]
+            )
+            smoothed2Confidence.append(
+                smoothedConfidence[i]
+            )
+
+
+
+    return     smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence
+
+
+
+
+'''
 class hsCanvesDrawer:
-    def __init__(self, points, lines, images, path2wmsDir, path2visFinal):
+    def __init__(self, points, lines, images, points_smooth, lines_smooth, points_smooth2, lines_smooth2, path2wmsDir, path2visFinal):
         self.lines = lines
         self.points = points
         self.images = images
+        self.points_smooth = points_smooth
+        self.lines_smooth = lines_smooth
+        self.points_smooth2 = points_smooth2
+        self.lines_smooth2 = lines_smooth2
 
         self.cid = lines.figure.canvas.mpl_connect('button_press_event', self)
 
@@ -424,37 +523,52 @@ class hsCanvesDrawer:
 
 
     def __call__(self, event):
-        print('click', event)
-        if event.inaxes!=self.lines.axes: return
-
+        #if event.inaxes!=self.lines.axes: return
+        #print('click', event)
+    #def update(self):
 
         if self.currentIndex < self.lastIndex:
-            imageName = finalResultsDict[self.resultsKey][self.timesList[self.currentIndex]]['fileName'].split('/')[-1]
-            self.currentIndex+=1
 
-            if os.path.exists(self.path2visFinal + imageName):
+            currentTime = self.timesList[self.currentIndex]
+            imageName = finalResultsDict[self.resultsKey][currentTime]['fileName'].split('/')[-1]
+
+            if currentTime in lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times']:
                 image = cv2.imread( self.path2visFinal + imageName)
 
-                selectedLengths, selectedTimes, selectedConfidence = getSelectedForPlotting(self.currentIndex)
+
+                selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(self.currentIndex)
+                smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence = getSelectedSmoothedLengths(self.currentIndex)
                 
+
                 self.lines.set_data(selectedTimes, selectedLengths)
                 self.points.set_data(selectedTimes, selectedLengths)
+
+                self.lines_smooth.set_data(smoothedTimes, smoothedLengths)
+                self.points_smooth.set_data(smoothedTimes, smoothedLengths)
+
+                self.lines_smooth2.set_data(smoothed2Times, smoothed2Lengths)
+                self.points_smooth2.set_data(smoothed2Times, smoothed2Lengths)
 
 
             else:
                 image = cv2.imread( self.path2wmsDir + imageName)
-
-
             
+
+            self.currentIndex+=1
             self.lines.figure.canvas.draw()
             self.points.figure.canvas.draw()
+            self.lines_smooth.figure.canvas.draw()
+            self.points_smooth.figure.canvas.draw()
+            self.lines_smooth2.figure.canvas.draw()
+            self.points_smooth2.figure.canvas.draw()
+
+            #self.figure.canvas.flush_events()
             self.images.imshow(image)
 
 
 
         else:
             plt.close()
-
 
 
 
@@ -470,67 +584,92 @@ plt.xlabel('Pixels')
 
 ax1 = fig.add_subplot(111)
 #ax.set_title('click to build line segments')
-#points, lines = plt.plot([], [], 'o', [], [])
 points, lines = ax1.plot([], [], 'o', [], [])
 
 
 ax2 = fig.add_subplot(211)
-#images, = ax2.plot([], [])
 
 
-#linebuilder = hsCanvesDrawer(points, lines, images, wmsDir, path2visFinal)
-linebuilder = hsCanvesDrawer(points, lines, ax2, wmsDir, path2visFinal)
+
+
+ax3 = fig.add_subplot(311)
+points_smooth, lines_smooth = ax3.plot([], [], 'o', [], [])
+
+ax4 = fig.add_subplot(411)
+points_smooth2, lines_smooth2 = ax4.plot([], [], 'o', [], [])
+
+linebuilder = hsCanvesDrawer(points, lines, ax2, points_smooth, lines_smooth, points_smooth2, lines_smooth2, wmsDir, path2visFinal)
+
+plt.show()
+'''
+
+
+
+xdata = []
+ydata = []
 
 plt.show()
 
+fig, axs = plt.subplots(3)
+
+axs[0].set_xlim(0, 250)
+axs[0].set_ylim(-50, +50)
+lines, = axs[0].plot(xdata, xdata)
+
+axs[1].set_xlim(0, 250)
+axs[1].set_ylim(-50, +50)
+points, = axs[1].plot(xdata, xdata)
+
+images = axs[2]
 
 
 
-'''
+
+
+path2wmsDir = wmsDir
+path2visFinal = path2visFinal
+resultsKey = list(finalResultsDict.keys())[0]
+
+timesList = sorted(finalResultsDict[resultsKey].keys())
+currentIndex = 0
+lastIndex = len(timesList)
+
+
+
+
+
+while 1:
+
+
+    if currentIndex < lastIndex:
+
+        currentTime = timesList[currentIndex]
+        imageName = finalResultsDict[resultsKey][currentTime]['fileName'].split('/')[-1]
+
+        if currentTime in lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times']:
+            image = cv2.imread( path2visFinal + imageName)
+
+
+            selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(currentIndex)
+
             
-    plotTitle = str(resKey + '__' + str(toothNbKey) + '__' + regTypeKeyWord + '__' + infoKey + '__'+ refKey)
-    plt.title(plotTitle)
-    plt.plot(selectedTimes, selectedLengths, label='nbOfPoints: ' + str(len(selectedLengths)))
-    plt.plot(selectedTimes, selectedLengths,'o')
-    for i in range(len(selectedTimes)):
-        ax.annotate( round(selectedConfidence[i], 1), (selectedTimes[i], selectedLengths[i]) )
-        
-        
-    ax.legend()
-    plt.savefig(path2savePlots + plotTitle + '.png')
-class hsCanvesDrawer:
-    def __init__(self, line, path2wmsDir, path2visFinal):
-        self.line = line
-        self.xs = list(line.get_xdata())
-        self.ys = list(line.get_ydata())
-        self.cid = line.figure.canvas.mpl_connect('button_press_event', self)
-        self.path2wmsDir = path2wmsDir
-        self.path2visFinal = path2visFinal
-        self.resultsKey = list(finalResultsDict.keys())[0]
-        self.timesList = sorted(finalResultsDict[self.resultsKey].keys())
-        self.currentIndex = 0
-        self.lastIndex = len(self.timesList)
-    def __call__(self, event):
-        print('click', event)
-        if event.inaxes!=self.line.axes: return
-        self.xs.append(event.xdata)
-        self.ys.append(event.ydata)
-        #self.line.set_data(self.xs, self.ys)
-        if self.currentIndex < self.lastIndex:
-            imageName = finalResultsDict[self.resultsKey][self.timesList[self.currentIndex]]['fileName'].split('/')[-1]
-            self.currentIndex+=1
-            if os.path.exists(self.path2visFinal + imageName):
-                image = cv2.imread( self.path2visFinal + imageName)
-            else:
-                image = cv2.imread( self.path2wmsDir + imageName)
-            plt.imshow(image)
-            self.line.figure.canvas.draw()
+            lines.set_xdata(selectedTimes)
+            lines.set_ydata(selectedLengths)
+
+            points.set_xdata(selectedTimes)
+            points.set_ydata(selectedLengths)
+
         else:
-            plt.close()
-fig = plt.figure()
-ax = fig.add_subplot(111)
-ax.set_title('click to build line segments')
-line, = ax.plot([0], [0])  # empty line
-linebuilder = hsCanvesDrawer(line, wmsDir, path2visFinal)
-plt.show()
-'''
+            image = cv2.imread( path2wmsDir + imageName)
+
+
+        currentIndex+=1
+
+        images.imshow(image)
+
+        plt.draw()
+        plt.pause(1e-17)
+
+
+    else:
+        break
