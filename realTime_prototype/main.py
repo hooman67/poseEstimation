@@ -341,6 +341,11 @@ regTypeKeyWord_glb = 'rigid_keypointsForTooth_'
 refKey_glb = 'WMDL_2018.09.11_06.21.57'
 infoKey_glb = 'all_tt2ls_dict'
 
+fittendLineType_glb = 'numpy.lib.polynomial'
+
+toothShouldBeChangedLength_glb= 21
+
+
 
 def getSelectedFinalLengths(endIndex):
     minAllowedConfidence = 0.7  #1 to 5 for conf1 --- 0-1 for conf 2 and 3
@@ -354,47 +359,50 @@ def getSelectedFinalLengths(endIndex):
 
     #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
     #for i in range(endIndex):
-    for i in range(endIndex - 1):
+    for i in range(endIndex):
 
         if filterBasedOnConf == 1:
-            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
+            if i < len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences']):
+                if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
 
-                selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
-                )
-                selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
-                )
-                selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
-                )
+                    selectedLengths.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
+                    )
+                    selectedTimes.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
+                    )
+                    selectedConfidence.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
+                    )
                 
         elif filterBasedOnConf == 2:
-            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i] >= minAllowedConfidence:
+            if i < len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences']):
+                if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i] >= minAllowedConfidence:
 
-                selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
-                )
-                selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
-                )
-                selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i]
-                )
+                    selectedLengths.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
+                    )
+                    selectedTimes.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
+                    )
+                    selectedConfidence.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['secondaryConfidences'][i]
+                    )
                 
                 
         elif filterBasedOnConf == 3:
-            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i] >= minAllowedConfidence:
+            if i < len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence']):
+                if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i] >= minAllowedConfidence:
 
-                selectedLengths.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
-                )
-                selectedTimes.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
-                )
-                selectedConfidence.append(
-                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i]
-                )
+                    selectedLengths.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
+                    )
+                    selectedTimes.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
+                    )
+                    selectedConfidence.append(
+                        lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['logConfidence'][i]
+                    )
 
 
 
@@ -418,20 +426,21 @@ def getSelectedSmoothedLengths(endIndex):
 
     #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
     #for i in range(endIndex):
-    for i in range(endIndex - 1):
-        if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
+    for i in range(endIndex):
+        if i < len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences']):
+            if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
 
-            selectedTimes.append(
-                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
-            )
-        
-            selectedLengths.append(
-                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
-            )
+                selectedTimes.append(
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'][i]
+                )
+            
+                selectedLengths.append(
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['lengths'][i]
+                )
 
-            selectedConfidence.append(
-                lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
-            )
+                selectedConfidence.append(
+                    lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i]
+                )
     ########################################################################################
 
 
@@ -603,10 +612,14 @@ def getTrajPointsBeforeAndAfterToothChange(func_beforeToothChange, func_afterToo
     pts_afterToothChange = [func_afterToothChange(time) for time in selectedTimes_forTraj[first_bgTooth_index:]]
 
     #return pts_beforeToothChange + pts_afterToothChange
+
+    if len(pts_afterToothChange) > 0:
+        pts_beforeToothChange = []
     return pts_beforeToothChange,  pts_afterToothChange
 
 
-
+def solve1stOrder(yVal, poly1d):
+    return (yVal - poly1d[0]) / poly1d[1]
 
 
 
@@ -616,7 +629,7 @@ def getTrajPointsBeforeAndAfterToothChange(func_beforeToothChange, func_afterToo
 
 '''
 # get tooth change times
-predictedTime = solve1stOrder(toothChangeTresh, estimatedFunction_afterToothChange)
+predictedTime = solve1stOrder(toothShouldBeChangedLength, estimatedFunction_afterToothChange)
 print('**pred toothChange time:  ' + str(predictedTime))
 '''
 
@@ -627,7 +640,7 @@ print('**pred toothChange time:  ' + str(predictedTime))
 ####################################################################################################
 ####################################################################################################
 plt.show()
-fig, axs = plt.subplots(4, figsize=(30,10))
+fig, axs = plt.subplots(5, figsize=(30,10))
 
 
 axs[0].set_xlim(0, 250)
@@ -640,17 +653,26 @@ points, lines, traj_regid = axs[0].plot([], [], 'o', [], [], [], [])
 axs[1].set_xlim(0, 250)
 axs[1].set_ylim(10, 40)
 axs[1].grid()
+axs[0].set_ylabel('Pixels')
 points_smooth, lines_smooth, traj_smooth = axs[1].plot([], [], 'o', [], [], [], [])
 
 
 axs[2].set_xlim(0, 250)
 axs[2].set_ylim(10, 40)
 axs[2].grid()
+axs[0].set_ylabel('Pixels')
 axs[2].set_xlabel('Hours')
 points_smooth2, lines_smooth2, traj_smooth2 = axs[2].plot([], [], 'o', [], [], [], [])
 
 
-images = axs[3]
+axs[3].set_xlim(0, 250)
+axs[3].set_ylim(0, 400)
+axs[3].grid()
+axs[3].set_ylabel('Hours')
+timePreds_regid, timePreds_smooth, timePreds_smooth2 = axs[2].plot([], [], 'o', [], [], 'x', [], [], 'bx')
+
+
+images = axs[4]
 
 
 
@@ -667,7 +689,6 @@ currentIndex = 0
 lastIndex = len(timesList)
 
 while 1:
-#for k in range(5):
     if currentIndex < lastIndex:
 
         currentTime = timesList[currentIndex]
@@ -767,10 +788,35 @@ while 1:
                 #traj_regid.set_xdata(range(len(selectedTimes)))
                 traj_regid.set_xdata(selectedTimes[:last_smTooth_index_regid])
                 traj_regid.set_ydata(trajPoints_regid_before)
+
+
+                if type(func_beforeToothChange_regid).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_regid)
+
+                    print('\n****BEFORE**********')
+                    print('predictedTime')
+                    print(predictedTime)
+                    print('*****************\n')
+
+                    timePreds_regid.set_xdata(last_smTooth_index_regid - 1)
+                    timePreds_regid.set_ydata(predictedTime)
             
+
             if len(trajPoints_regid_after) > 0:
                 traj_regid.set_xdata(selectedTimes[first_bgTooth_index_regid:])
                 traj_regid.set_ydata(trajPoints_regid_after)
+
+                if type(func_afterToothChange_regid).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_regid)
+
+                    print('\n****After**********')
+                    print('predictedTime')
+                    print(predictedTime)
+                    print('*****************\n')
+
+                    timePreds_regid.set_xdata(first_bgTooth_index_regid)
+                    timePreds_regid.set_ydata(predictedTime)
+
 
 
 
@@ -784,9 +830,24 @@ while 1:
                 traj_smooth.set_xdata(smoothedTimes[:last_smTooth_index_smooth])
                 traj_smooth.set_ydata(trajPoints_smooth_before)
 
+
+                if type(func_beforeToothChange_smooth).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth)
+
+                    timePreds_smooth.set_xdata(last_smTooth_index_smooth - 1)
+                    timePreds_smooth.set_ydata(predictedTime)
+
+
             if len(trajPoints_smooth_after) > 0:
                 traj_smooth.set_xdata(smoothedTimes[first_bgTooth_index_smooth:])
                 traj_smooth.set_ydata(trajPoints_smooth_after)
+
+
+                if type(func_afterToothChange_smooth).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth)
+
+                    timePreds_smooth.set_xdata(first_bgTooth_index_smooth)
+                    timePreds_smooth.set_ydata(predictedTime)
 
 
 
@@ -800,9 +861,24 @@ while 1:
                 traj_smooth2.set_xdata(smoothed2Times[:last_smTooth_index_smooth2])
                 traj_smooth2.set_ydata(trajPoints_smooth2_before)
 
+
+                if type(func_beforeToothChange_smooth2).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth2)
+
+                    timePreds_smooth2.set_xdata(last_smTooth_index_smooth2 - 1)
+                    timePreds_smooth2.set_ydata(predictedTime)
+                
+
             if len(trajPoints_smooth2_after) > 0:
                 traj_smooth2.set_xdata(smoothed2Times[first_bgTooth_index_smooth2:])
                 traj_smooth2.set_ydata(trajPoints_smooth2_after)
+
+
+                if type(func_afterToothChange_smooth2).__module__ == fittendLineType_glb:
+                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth2)
+
+                    timePreds_smooth2.set_xdata(first_bgTooth_index_smooth2)
+                    timePreds_smooth2.set_ydata(predictedTime)
 
 
         else:
