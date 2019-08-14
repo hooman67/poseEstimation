@@ -653,14 +653,14 @@ points, lines, traj_regid = axs[0].plot([], [], 'o', [], [], [], [])
 axs[1].set_xlim(0, 250)
 axs[1].set_ylim(10, 40)
 axs[1].grid()
-axs[0].set_ylabel('Pixels')
+axs[1].set_ylabel('Pixels')
 points_smooth, lines_smooth, traj_smooth = axs[1].plot([], [], 'o', [], [], [], [])
 
 
 axs[2].set_xlim(0, 250)
 axs[2].set_ylim(10, 40)
 axs[2].grid()
-axs[0].set_ylabel('Pixels')
+axs[2].set_ylabel('Pixels')
 axs[2].set_xlabel('Hours')
 points_smooth2, lines_smooth2, traj_smooth2 = axs[2].plot([], [], 'o', [], [], [], [])
 
@@ -669,7 +669,7 @@ axs[3].set_xlim(0, 250)
 axs[3].set_ylim(0, 400)
 axs[3].grid()
 axs[3].set_ylabel('Hours')
-timePreds_regid, timePreds_smooth, timePreds_smooth2 = axs[2].plot([], [], 'o', [], [], 'x', [], [], 'bx')
+timePreds_regid, timePreds_smooth, timePreds_smooth2 = axs[3].plot([], [], 'o', [], [], 'rx', [], [], 'bx')
 
 
 images = axs[4]
@@ -687,6 +687,17 @@ resultsKey = list(finalResultsDict.keys())[0]
 timesList = sorted(paresedResultsDict[resultsKey].keys())
 currentIndex = 0
 lastIndex = len(timesList)
+
+
+
+currentTimes_regid = []
+predictedTimes_regid = []
+
+predictedTimes_smooth = []
+currentTimes_smooth= []
+
+predictedTimes_smooth2 = []
+currentTimes_smooth2 = []
 
 while 1:
     if currentIndex < lastIndex:
@@ -785,37 +796,32 @@ while 1:
             points.set_ydata(selectedLengths)
 
             if len(trajPoints_regid_before) > 0:
-                #traj_regid.set_xdata(range(len(selectedTimes)))
                 traj_regid.set_xdata(selectedTimes[:last_smTooth_index_regid])
                 traj_regid.set_ydata(trajPoints_regid_before)
 
 
                 if type(func_beforeToothChange_regid).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_regid)
+                    predictedTimes_regid.append(predictedTime)
+                    currentTimes_regid.append(currentTime)
 
-                    print('\n****BEFORE**********')
-                    print('predictedTime')
-                    print(predictedTime)
-                    print('*****************\n')
-
-                    timePreds_regid.set_xdata(last_smTooth_index_regid - 1)
-                    timePreds_regid.set_ydata(predictedTime)
+                    timePreds_regid.set_xdata(currentTimes_regid)
+                    timePreds_regid.set_ydata(predictedTimes_regid)
             
 
             if len(trajPoints_regid_after) > 0:
                 traj_regid.set_xdata(selectedTimes[first_bgTooth_index_regid:])
                 traj_regid.set_ydata(trajPoints_regid_after)
 
+
                 if type(func_afterToothChange_regid).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_regid)
+                    predictedTimes_regid.append(predictedTime)
+                    currentTimes_regid.append(currentTime)
 
-                    print('\n****After**********')
-                    print('predictedTime')
-                    print(predictedTime)
-                    print('*****************\n')
+                    timePreds_regid.set_xdata(currentTimes_regid)
+                    timePreds_regid.set_ydata(predictedTimes_regid)
 
-                    timePreds_regid.set_xdata(first_bgTooth_index_regid)
-                    timePreds_regid.set_ydata(predictedTime)
 
 
 
@@ -833,9 +839,11 @@ while 1:
 
                 if type(func_beforeToothChange_smooth).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth)
+                    predictedTimes_smooth.append(predictedTime)
+                    currentTimes_smooth.append(currentTime)
 
-                    timePreds_smooth.set_xdata(last_smTooth_index_smooth - 1)
-                    timePreds_smooth.set_ydata(predictedTime)
+                    timePreds_smooth.set_xdata(currentTimes_smooth)
+                    timePreds_smooth.set_ydata(predictedTimes_smooth)
 
 
             if len(trajPoints_smooth_after) > 0:
@@ -845,9 +853,11 @@ while 1:
 
                 if type(func_afterToothChange_smooth).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth)
+                    predictedTimes_smooth.append(predictedTime)
+                    currentTimes_smooth.append(currentTime)
 
-                    timePreds_smooth.set_xdata(first_bgTooth_index_smooth)
-                    timePreds_smooth.set_ydata(predictedTime)
+                    timePreds_smooth.set_xdata(currentTimes_smooth)
+                    timePreds_smooth.set_ydata(predictedTimes_smooth)
 
 
 
@@ -864,9 +874,11 @@ while 1:
 
                 if type(func_beforeToothChange_smooth2).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth2)
+                    predictedTimes_smooth2.append(predictedTime)
+                    currentTimes_smooth2.append(currentTime)
 
-                    timePreds_smooth2.set_xdata(last_smTooth_index_smooth2 - 1)
-                    timePreds_smooth2.set_ydata(predictedTime)
+                    timePreds_smooth2.set_xdata(currentTimes_smooth2)
+                    timePreds_smooth2.set_ydata(predictedTimes_smooth2)
                 
 
             if len(trajPoints_smooth2_after) > 0:
@@ -876,9 +888,11 @@ while 1:
 
                 if type(func_afterToothChange_smooth2).__module__ == fittendLineType_glb:
                     predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth2)
+                    predictedTimes_smooth2.append(predictedTime)
+                    currentTimes_smooth2.append(currentTime)
 
-                    timePreds_smooth2.set_xdata(first_bgTooth_index_smooth2)
-                    timePreds_smooth2.set_ydata(predictedTime)
+                    timePreds_smooth2.set_xdata(currentTimes_smooth2)
+                    timePreds_smooth2.set_ydata(predictedTimes_smooth2)
 
 
         else:
