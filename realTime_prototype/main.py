@@ -353,7 +353,8 @@ def getSelectedFinalLengths(endIndex):
     selectedConfidence = []
 
     #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
-    for i in range(0, endIndex, 1):
+    #for i in range(endIndex):
+    for i in range(endIndex - 1):
 
         if filterBasedOnConf == 1:
             if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
@@ -416,7 +417,8 @@ def getSelectedSmoothedLengths(endIndex):
     selectedConfidence = []
 
     #for i in range(len(lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['times'])):
-    for i in range(0, endIndex, 1):
+    #for i in range(endIndex):
+    for i in range(endIndex - 1):
         if lengthsAndLandmarksDict[resKey_glb][regTypeKeyWord_glb][refKey_glb][toothNbKey_glb][infoKey_glb]['confidences'][i] >= minAllowedConfidence:
 
             selectedTimes.append(
@@ -502,9 +504,128 @@ def getSelectedSmoothedLengths(endIndex):
     return     smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence
 
 
+def findToothChangeIndex(selectedLengths_forTraj):
+    toothChangeLengthTresh = 10
+    
+    last_smTooth_index = len(selectedLengths_forTraj)
+    last_smTooth_length = 0
+    first_bgTooth_index = 0
+    first_bgTooth_length = 0
+
+
+    prevLen = selectedLengths_forTraj[0]
+    for curInd in range(1, len(selectedLengths_forTraj)):
+        curLen = selectedLengths_forTraj[curInd]
+        
+        if (curLen - prevLen) > toothChangeLengthTresh:
+            last_smTooth_index = curInd - 1
+            first_bgTooth_index = curInd
+            last_smTooth_length = prevLen
+            first_bgTooth_length = curLen
+            break
+            
+        prevLen = curLen
+
+
+    return last_smTooth_index, first_bgTooth_index
+
+
+def getTrajBeforeAndAfterToothChange(selectedLengths_forTraj, selectedTimes_forTraj, last_smTooth_index, first_bgTooth_index):
+    degreeOfPolyn = 1
+
+
+    # Fit to before tooth change segment
+    x = np.ndarray(shape=(1,))
+    y = np.ndarray(shape=(1,))
+
+    for pInd in range(last_smTooth_index):
+        x = np.vstack([x, selectedTimes_forTraj[pInd]])
+        y = np.vstack([y, selectedLengths_forTraj[pInd]])
+
+    x = x[1:,]
+    y = y[1:,]
+    x = x.reshape(-1)
+    y = y.reshape(-1)
 
 
 
+    #TODO: remove
+    '''
+    print('\n*****************************')
+    print('selectedLengths_forTraj')
+    print(selectedLengths_forTraj)
+    print('selectedTimes_forTraj')
+    print(selectedTimes_forTraj)
+    print('last_smTooth_index')
+    print(last_smTooth_index)
+    print('first_bgTooth_index')
+    print(first_bgTooth_index)
+
+    print('x')
+    print(x)
+    print('y')
+    print(y)
+    print('*****************************\n')
+    '''
+
+
+
+    z = np.polyfit(x, y, degreeOfPolyn)
+    estimatedFunction_beforeToothChange = np.poly1d(z)
+
+
+
+
+    # Fit to after tooth change segment
+    x = np.ndarray(shape=(1,))
+    y = np.ndarray(shape=(1,))
+
+    for pInd in range(first_bgTooth_index, len(selectedLengths_forTraj), 1):
+        x = np.vstack([x, selectedTimes_forTraj[pInd]])
+        y = np.vstack([y, selectedLengths_forTraj[pInd]])
+
+    x = x[1:,]
+    y = y[1:,]
+    x = x.reshape(-1)
+    y = y.reshape(-1)
+
+    z = np.polyfit(x, y, degreeOfPolyn)
+    estimatedFunction_afterToothChange = np.poly1d(z)
+
+
+
+    return estimatedFunction_beforeToothChange, estimatedFunction_afterToothChange
+
+
+def getTrajPointsBeforeAndAfterToothChange(func_beforeToothChange, func_afterToothChange, selectedTimes_forTraj, last_smTooth_index, first_bgTooth_index):
+    pts_beforeToothChange = [func_beforeToothChange(time) for time in selectedTimes_forTraj[:last_smTooth_index]]
+
+    pts_afterToothChange = [func_afterToothChange(time) for time in selectedTimes_forTraj[first_bgTooth_index:]]
+
+    #return pts_beforeToothChange + pts_afterToothChange
+    return pts_beforeToothChange,  pts_afterToothChange
+
+
+
+
+
+
+
+
+
+
+'''
+# get tooth change times
+predictedTime = solve1stOrder(toothChangeTresh, estimatedFunction_afterToothChange)
+print('**pred toothChange time:  ' + str(predictedTime))
+'''
+
+
+
+
+####################################################################################################
+####################################################################################################
+####################################################################################################
 plt.show()
 fig, axs = plt.subplots(4, figsize=(30,10))
 
@@ -513,20 +634,20 @@ axs[0].set_xlim(0, 250)
 axs[0].set_ylim(10, 40)
 axs[0].grid()
 axs[0].set_ylabel('Pixels')
-points, lines = axs[0].plot([], [], 'o', [], [])
+points, lines, traj_regid = axs[0].plot([], [], 'o', [], [], [], [])
 
 
 axs[1].set_xlim(0, 250)
 axs[1].set_ylim(10, 40)
 axs[1].grid()
-points_smooth, lines_smooth = axs[1].plot([], [], 'o', [], [])
+points_smooth, lines_smooth, traj_smooth = axs[1].plot([], [], 'o', [], [], [], [])
 
 
 axs[2].set_xlim(0, 250)
 axs[2].set_ylim(10, 40)
 axs[2].grid()
 axs[2].set_xlabel('Hours')
-points_smooth2, lines_smooth2 = axs[2].plot([], [], 'o', [], [])
+points_smooth2, lines_smooth2, traj_smooth2 = axs[2].plot([], [], 'o', [], [], [], [])
 
 
 images = axs[3]
@@ -546,6 +667,7 @@ currentIndex = 0
 lastIndex = len(timesList)
 
 while 1:
+#for k in range(5):
     if currentIndex < lastIndex:
 
         currentTime = timesList[currentIndex]
@@ -557,13 +679,99 @@ while 1:
 
             selectedLengths, selectedTimes, selectedConfidence = getSelectedFinalLengths(currentIndex)
             smoothedTimes, smoothedLengths, smoothedConfidence, smoothed2Times, smoothed2Lengths, smoothed2Confidence = getSelectedSmoothedLengths(currentIndex)
-                
+
+
+
+            if len(selectedLengths) > 2:
+                last_smTooth_index_regid, first_bgTooth_index_regid = findToothChangeIndex(selectedLengths)
+
+                func_beforeToothChange_regid, func_afterToothChange_regid = getTrajBeforeAndAfterToothChange(
+                    selectedLengths,
+                    selectedTimes,
+                    last_smTooth_index_regid,
+                    first_bgTooth_index_regid
+                )
+
+                trajPoints_regid_before, trajPoints_regid_after = getTrajPointsBeforeAndAfterToothChange(
+                    func_beforeToothChange_regid,
+                    func_afterToothChange_regid,
+                    selectedTimes,
+                    last_smTooth_index_regid,
+                    first_bgTooth_index_regid
+                )
+
+            else:
+                trajPoints_regid_before = []
+                trajPoints_regid_after  = []
+           
+
             
+            if len(smoothedLengths) > 0: 
+                last_smTooth_index_smooth, first_bgTooth_index_smooth = findToothChangeIndex(smoothedLengths)
+
+                func_beforeToothChange_smooth, func_afterToothChange_smooth = getTrajBeforeAndAfterToothChange(
+                    smoothedLengths,
+                    smoothedTimes,
+                    last_smTooth_index_smooth,
+                    first_bgTooth_index_smooth
+                )
+
+                trajPoints_smooth_before, trajPoints_smooth_after = getTrajPointsBeforeAndAfterToothChange(
+                    func_beforeToothChange_smooth,
+                    func_afterToothChange_smooth,
+                    smoothedTimes,
+                    last_smTooth_index_smooth,
+                    first_bgTooth_index_smooth
+                )
+            
+            else:
+                trajPoints_smooth_before = []
+                trajPoints_smooth_after = []
+
+
+
+            if len(smoothed2Lengths) > 0:
+                last_smTooth_index_smooth2, first_bgTooth_index_smooth2 = findToothChangeIndex(smoothed2Lengths)
+
+                func_beforeToothChange_smooth2, func_afterToothChange_smooth2 = getTrajBeforeAndAfterToothChange(
+                    smoothed2Lengths,
+                    smoothed2Times,
+                    last_smTooth_index_smooth2,
+                    first_bgTooth_index_smooth2
+                )
+
+                trajPoints_smooth2_before, trajPoints_smooth2_after = getTrajPointsBeforeAndAfterToothChange(
+                    func_beforeToothChange_smooth2,
+                    func_afterToothChange_smooth2,
+                    smoothed2Times,
+                    last_smTooth_index_smooth2,
+                    first_bgTooth_index_smooth2
+                )
+
+            else:
+                trajPoints_smooth2_before = []
+                trajPoints_smooth2_after = []
+            
+
+
+
+
+            # update the plots
             lines.set_xdata(selectedTimes)
             lines.set_ydata(selectedLengths)
 
             points.set_xdata(selectedTimes)
             points.set_ydata(selectedLengths)
+
+            if len(trajPoints_regid_before) > 0:
+                #traj_regid.set_xdata(range(len(selectedTimes)))
+                traj_regid.set_xdata(selectedTimes[:last_smTooth_index_regid])
+                traj_regid.set_ydata(trajPoints_regid_before)
+            
+            if len(trajPoints_regid_after) > 0:
+                traj_regid.set_xdata(selectedTimes[first_bgTooth_index_regid:])
+                traj_regid.set_ydata(trajPoints_regid_after)
+
 
 
             lines_smooth.set_xdata(smoothedTimes)
@@ -572,12 +780,29 @@ while 1:
             points_smooth.set_xdata(smoothedTimes)
             points_smooth.set_ydata(smoothedLengths)
 
+            if len(trajPoints_smooth_before) > 0:
+                traj_smooth.set_xdata(smoothedTimes[:last_smTooth_index_smooth])
+                traj_smooth.set_ydata(trajPoints_smooth_before)
+
+            if len(trajPoints_smooth_after) > 0:
+                traj_smooth.set_xdata(smoothedTimes[first_bgTooth_index_smooth:])
+                traj_smooth.set_ydata(trajPoints_smooth_after)
+
+
 
             lines_smooth2.set_xdata(smoothed2Times)
             lines_smooth2.set_ydata(smoothed2Lengths)
 
             points_smooth2.set_xdata(smoothed2Times)
             points_smooth2.set_ydata(smoothed2Lengths)
+
+            if len(trajPoints_smooth2_before) > 0:
+                traj_smooth2.set_xdata(smoothed2Times[:last_smTooth_index_smooth2])
+                traj_smooth2.set_ydata(trajPoints_smooth2_before)
+
+            if len(trajPoints_smooth2_after) > 0:
+                traj_smooth2.set_xdata(smoothed2Times[first_bgTooth_index_smooth2:])
+                traj_smooth2.set_ydata(trajPoints_smooth2_after)
 
 
         else:
