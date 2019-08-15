@@ -343,7 +343,7 @@ infoKey_glb = 'all_tt2ls_dict'
 
 fittendLineType_glb = 'numpy.lib.polynomial'
 
-degreeOfPolyn_glb = 2
+degreeOfPolyn_glb = 3
 toothShouldBeChangedLength_glb= 21
 
 
@@ -630,7 +630,7 @@ def getAnyOrderRoots(yVal, poly1d):
     if len(roots) == 1:
         return roots[0]
     
-    if len(roots) > 1:
+    if len(roots) == 2:
         if roots[0] < 0 and roots[1] < 0:
             print('Error: both roots are negetive')
             return 0
@@ -650,6 +650,36 @@ def getAnyOrderRoots(yVal, poly1d):
             else:
                 return roots[1]
 
+
+    if len(roots) == 3:
+        if roots[0] < 0 and roots[1] < 0 and roots[2] < 0:
+            print('Error: both roots are negetive')
+            return 0
+
+        if roots[0] < 0 and roots[1] > 0 and roots[2] < 0:
+            return roots[1]
+
+        if roots[0] > 0 and roots[1] < 0 and roots[2] < 0:
+            return roots[0]
+
+        if roots[0] < 0 and roots[1] < 0 and roots[2] > 0:
+            return roots[2]
+
+
+        diff1 = 10000
+        diff2 = 10000
+        diff3 = 10000
+        
+        if roots[0] > 0: 
+            diff1 = abs(poly1d(roots[0]) - yVal)
+        if roots[1] > 0:
+            diff2 = abs(poly1d(roots[1]) - yVal)
+        if roots[2] > 0:
+            diff3 = abs(poly1d(roots[2]) - yVal)
+
+        diffsAr = np.array([diff1, diff2, diff3])
+
+        return roots[diffsAr.argmin()]
 
 
 
@@ -926,7 +956,7 @@ while 1:
             image = cv2.imread( path2wmsDir + imageName)
 
 
-        currentIndex+=10
+        currentIndex+=5
 
         images.imshow(image)
 
