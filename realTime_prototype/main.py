@@ -343,6 +343,7 @@ infoKey_glb = 'all_tt2ls_dict'
 
 fittendLineType_glb = 'numpy.lib.polynomial'
 
+degreeOfPolyn_glb = 2
 toothShouldBeChangedLength_glb= 21
 
 
@@ -540,9 +541,6 @@ def findToothChangeIndex(selectedLengths_forTraj):
 
 
 def getTrajBeforeAndAfterToothChange(selectedLengths_forTraj, selectedTimes_forTraj, last_smTooth_index, first_bgTooth_index):
-    degreeOfPolyn = 1
-
-
     # Fit to before tooth change segment
     x = np.ndarray(shape=(1,))
     y = np.ndarray(shape=(1,))
@@ -579,7 +577,7 @@ def getTrajBeforeAndAfterToothChange(selectedLengths_forTraj, selectedTimes_forT
 
 
 
-    z = np.polyfit(x, y, degreeOfPolyn)
+    z = np.polyfit(x, y, degreeOfPolyn_glb)
     estimatedFunction_beforeToothChange = np.poly1d(z)
 
 
@@ -598,7 +596,7 @@ def getTrajBeforeAndAfterToothChange(selectedLengths_forTraj, selectedTimes_forT
     x = x.reshape(-1)
     y = y.reshape(-1)
 
-    z = np.polyfit(x, y, degreeOfPolyn)
+    z = np.polyfit(x, y, degreeOfPolyn_glb)
     estimatedFunction_afterToothChange = np.poly1d(z)
 
 
@@ -618,10 +616,39 @@ def getTrajPointsBeforeAndAfterToothChange(func_beforeToothChange, func_afterToo
     return pts_beforeToothChange,  pts_afterToothChange
 
 
-def solve1stOrder(yVal, poly1d):
-    return (yVal - poly1d[0]) / poly1d[1]
+def solveAnyOrder(yVal, poly1d):
+    return (poly1d - yVal).r
 
 
+def getAnyOrderRoots(yVal, poly1d):
+    roots = solveAnyOrder(yVal, poly1d)
+    
+    if len(roots) < 1:
+        print('Error: in finding the roots')
+        return 0
+    
+    if len(roots) == 1:
+        return roots[0]
+    
+    if len(roots) > 1:
+        if roots[0] < 0 and roots[1] < 0:
+            print('Error: both roots are negetive')
+            return 0
+
+        if roots[0] < 0 and roots[1] > 0:
+            return roots[1]
+
+        if roots[0] > 0 and roots[1] < 0:
+            return roots[0]
+
+        if roots[0] > 0 and roots[1] > 0:
+            diff1 = abs(poly1d(roots[0]) - yVal)
+            diff2 = abs(poly1d(roots[1]) - yVal)
+
+            if diff1 < diff2:
+                return roots[0]
+            else:
+                return roots[1]
 
 
 
@@ -629,7 +656,7 @@ def solve1stOrder(yVal, poly1d):
 
 '''
 # get tooth change times
-predictedTime = solve1stOrder(toothShouldBeChangedLength, estimatedFunction_afterToothChange)
+predictedTime = getAnyOrderRoots(toothShouldBeChangedLength, estimatedFunction_afterToothChange)
 print('**pred toothChange time:  ' + str(predictedTime))
 '''
 
@@ -801,7 +828,7 @@ while 1:
 
 
                 if type(func_beforeToothChange_regid).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_regid)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_beforeToothChange_regid)
                     predictedTimes_regid.append(predictedTime)
                     currentTimes_regid.append(currentTime)
 
@@ -815,7 +842,7 @@ while 1:
 
 
                 if type(func_afterToothChange_regid).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_regid)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_afterToothChange_regid)
                     predictedTimes_regid.append(predictedTime)
                     currentTimes_regid.append(currentTime)
 
@@ -838,7 +865,7 @@ while 1:
 
 
                 if type(func_beforeToothChange_smooth).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth)
                     predictedTimes_smooth.append(predictedTime)
                     currentTimes_smooth.append(currentTime)
 
@@ -852,7 +879,7 @@ while 1:
 
 
                 if type(func_afterToothChange_smooth).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_afterToothChange_smooth)
                     predictedTimes_smooth.append(predictedTime)
                     currentTimes_smooth.append(currentTime)
 
@@ -873,7 +900,7 @@ while 1:
 
 
                 if type(func_beforeToothChange_smooth2).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth2)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_beforeToothChange_smooth2)
                     predictedTimes_smooth2.append(predictedTime)
                     currentTimes_smooth2.append(currentTime)
 
@@ -887,7 +914,7 @@ while 1:
 
 
                 if type(func_afterToothChange_smooth2).__module__ == fittendLineType_glb:
-                    predictedTime = solve1stOrder(toothShouldBeChangedLength_glb, func_afterToothChange_smooth2)
+                    predictedTime = getAnyOrderRoots(toothShouldBeChangedLength_glb, func_afterToothChange_smooth2)
                     predictedTimes_smooth2.append(predictedTime)
                     currentTimes_smooth2.append(currentTime)
 
@@ -899,7 +926,7 @@ while 1:
             image = cv2.imread( path2wmsDir + imageName)
 
 
-        currentIndex+=1
+        currentIndex+=10
 
         images.imshow(image)
 
