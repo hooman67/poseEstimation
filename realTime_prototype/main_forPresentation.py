@@ -1,13 +1,18 @@
 import sys
 import time as tt
 
-# This is needed if the notebook is stored in the object_detection folder.
-sys.path.append(".")
-sys.path.append("/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH01_2800")
-
 
 from helpers import *
-from configs import *
+from configs_hydraulic import *
+
+# This is needed if the notebook is stored in the object_detection folder.
+sys.path.append(".")
+#sys.path.append("/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH01_2800")
+sys.path.append(mainPath)
+
+
+
+
 refKey = references2use[0]
 referenceRatiosDict = getReferenceRatios(refKey)
 
@@ -338,7 +343,8 @@ lengthsAndLandmarksDict = getAllLengthsAndLandmarks(
 resKey_glb = list(lengthsAndLandmarksDict.keys())[0]
 toothNbKey_glb = 'tooth_' + str(0 + 1) + '_info'  
 regTypeKeyWord_glb = 'rigid_keypointsForTooth_'
-refKey_glb = 'WMDL_2018.09.11_06.21.57'
+#refKey_glb = 'WMDL_2018.09.11_06.21.57'
+refKey_glb = refKey
 infoKey_glb = 'all_tt2ls_dict'
 
 fittendLineType_glb = 'numpy.lib.polynomial'
@@ -412,7 +418,7 @@ def getSelectedFinalLengths(endIndex):
 
 def getSelectedSmoothedLengths(endIndex):
     minAllowedConfidence = 1# used value of 1 for cable and for hydraulic. So we basically allow all confidences
-    minAllowedConfidence2ndSmoothing = 4 # used value of 7 for cable. 4 for hydraulic. This is the number of points withing the time window
+    minAllowedConfidence2ndSmoothing = 4 # used 4 for everything
 
     timeWindowLength = 2
 
@@ -749,7 +755,7 @@ currentTimes_smooth2 = []
 
 
 
-currentIndex = 20
+currentIndex = 170#20
 
 
 while 1:
@@ -874,15 +880,15 @@ while 1:
 
             #plt.show()
 
-            #fig, axs = plt.subplots(3, figsize=(10,10))
-            fig, axs = plt.subplots(1, 3, figsize=(10,10))
+            fig, axs = plt.subplots(3, figsize=(10,10))
 
 
 
 
 
-            #labels=['20','40','60','80','100','120','140','160','180','200','220','240','260','280','300']
-            labels=['0','40','80','120','160','200','240','280','320']
+            
+            #labels=['0','40','80','120','160','200','240','280','320'] # used for Cable Sishen 1
+            labels=['100','200','300','400','500','600','700','800','900', '1000'] # used for Hydraulic GT AITIK
             label_bins = [int(i) for i in labels]
 
             colors='YlOrRd_r'
@@ -953,6 +959,8 @@ while 1:
 
             arrow = np.digitize(predictedTime, label_bins) + 1
 
+            '''
+            #for cable
             if arrow == 2:
                 arrow = 1
 
@@ -962,6 +970,10 @@ while 1:
 
             if currentIndex > 70 and currentIndex < 255:
                 arrow = 4
+            '''
+
+            if currentIndex > 705:
+                arrow = 10
 
 
 
@@ -988,8 +1000,10 @@ while 1:
 
 
 
-            axs[0].set_xlim(0, 250)
-            axs[0].set_ylim(10, 40)
+            #axs[0].set_xlim(0, 250) #for cable sishen 1
+            #axs[0].set_ylim(10, 40) #for cable sishen 1
+            axs[0].set_xlim(0, 300) #for hydraulic GT Aitik
+            axs[0].set_ylim(50, 90) #for hydraulic GT Aitik
             axs[0].grid()
             axs[0].set_ylabel('Pixels')
             axs[0].set_xlabel('Hours')
@@ -1013,7 +1027,7 @@ while 1:
         #plt.pause(1e-17)
         #plt.pause(10)
 
-        fig.savefig('/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH01_2800/preFigs/' + str(currentIndex) + '.png', dpi=200)
+        fig.savefig('/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik_Komatsu_SH1142_PC5500_2019-02-26_to_2019-03-10/preFigs/' + str(currentIndex) + '.png', dpi=200)
 
 
 
