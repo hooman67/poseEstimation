@@ -2,7 +2,7 @@ import os, cv2, json
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+'''
 shovelType = 'cable'
 
 inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH01_2800/Frame/'
@@ -16,6 +16,26 @@ useSSD_insteadOfYolo = False
 yoloWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/cable_full_yolo_bb_cable_final.h5'
 
 ssdPredsDir = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Liebherr/ssd_preds/'
+'''
+
+
+shovelType = 'hydraulic'
+
+inputImagePath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik_Komatsu_SH1142_PC5500_2019-02-26_to_2019-03-10/usingNewPoseNet/Frame/'
+
+outputPredPath = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik_Komatsu_SH1142_PC5500_2019-02-26_to_2019-03-10/usingNewPoseNet/yolo_preds/'
+
+#keypointsWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/hydraulic_pose_resnet_18.pb'
+keypointsWeights = '/media/hooman/1tb-ssd-hs3-linu/BucketTracking-Project/poseNet/hydraulic/try4(byAnuar)-OndataTry2_withoutAug_sigmaForHeatmaps1InsteadOf2/final_state.pb'
+
+
+
+useSSD_insteadOfYolo = False
+
+yoloWeights = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/poseEstimation/hydraulic_full_yolo_bb_final.h5'
+
+ssdPredsDir = '/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Liebherr/ssd_preds/'
+
 
 
 if shovelType == 'hydraulic':

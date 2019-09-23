@@ -17,7 +17,8 @@ import xml.etree.ElementTree as ET
 from scipy.optimize import fmin_cobyla
 
 sys.path.append(".")
-from configs_hydraulic import *
+#from configs_hydraulic import *
+from configs_cable import *
 
 
 def draw_patch_keypoints(image, patch_keypoints, validKeypoints = []):

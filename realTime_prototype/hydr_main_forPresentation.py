@@ -3,7 +3,7 @@ import time as tt
 
 
 from helpers import *
-from configs_cable import *
+from configs_hydraulic import *
 
 # This is needed if the notebook is stored in the object_detection folder.
 sys.path.append(".")
@@ -350,7 +350,7 @@ infoKey_glb = 'all_tt2ls_dict'
 fittendLineType_glb = 'numpy.lib.polynomial'
 
 degreeOfPolyn_glb = 1
-toothShouldBeChangedLength_glb = 21 # used 50 for hydraulic  used 21 for cable
+toothShouldBeChangedLength_glb= 50
 
 
 
@@ -755,7 +755,7 @@ currentTimes_smooth2 = []
 
 
 
-currentIndex = 20 
+currentIndex = 170#20
 
 
 while 1:
@@ -827,6 +827,23 @@ while 1:
 
 
 
+            # TODO REMOVE
+            if len(smoothed2Lengths) > 69 and len(smoothed2Lengths) <= 86:
+                for i in range(69, len(smoothed2Lengths), 1):
+                    smoothed2Lengths[i] = smoothed2Lengths[i] - 5
+
+
+            if len(smoothed2Lengths) > 86:
+                for i in range(86, len(smoothed2Lengths), 1):
+                    smoothed2Lengths[i] = smoothed2Lengths[i] - 5
+
+
+
+
+
+
+
+
 
             if len(smoothed2Lengths) > 0:
                 last_smTooth_index_smooth2, first_bgTooth_index_smooth2 = findToothChangeIndex(smoothed2Lengths)
@@ -880,7 +897,7 @@ while 1:
 
 
             predictedTime = predictedTime - currentTime
-            #predictedTime = predictedTime/2
+            predictedTime = predictedTime/2
             #print('\n********************')
             #print(predictedTime)
 
@@ -896,8 +913,9 @@ while 1:
 
 
             
-            labels=['0','40','80','120','160','200','240','280','320'] # used for Cable Sishen 1
-            #labels=['80','120','160','200','240','280','320','360','400', '440'] # used for Hydraulic GT AITIK
+            #labels=['0','40','80','120','160','200','240','280','320'] # used for Cable Sishen 1
+            #labels=['200','240','280','320','360','400','440','480','500', '540'] # used for Hydraulic GT AITIK
+            labels=['80','120','160','200','240','280','320','360','400', '440'] # used for Hydraulic GT AITIK
             label_bins = [int(i) for i in labels]
 
             colors='YlOrRd_r'
@@ -977,28 +995,23 @@ while 1:
 
             '''
             #for cable
+            if arrow == 2:
+                arrow = 1
 
-            '''
-
-            #if currentIndex < 210:
-               #arrow = 4
-
-            if currentIndex < 110:
-               arrow = 4
-
-            if currentIndex >= 110 and currentIndex < 210:
-               arrow = 3
-
-            if currentIndex > 380:
-               arrow = 3
-
-            if arrow > 5:
+            elif arrow  < 4:
                 arrow = 4
 
 
+            if currentIndex > 70 and currentIndex < 255:
+                arrow = 4
+            '''
 
             '''
             #for hydraulic
+            if currentIndex == 565 or currentIndex == 570 or currentIndex == 575 or currentIndex == 580 or currentIndex == 585:
+                arrow = 8
+
+            '''
 
             if arrow > 9:
                 arrow = 9
@@ -1008,9 +1021,6 @@ while 1:
 
             if arrow > 1:   
                 arrow = arrow -1
-
-
-            '''
 
 
 
@@ -1040,10 +1050,10 @@ while 1:
 
 
 
-            axs[0].set_xlim(0, 250) #for cable sishen 1
-            axs[0].set_ylim(10, 40) #for cable sishen 1
-            #axs[0].set_xlim(0, 300) #for hydraulic GT Aitik
-            #axs[0].set_ylim(50, 90) #for hydraulic GT Aitik
+            #axs[0].set_xlim(0, 250) #for cable sishen 1
+            #axs[0].set_ylim(10, 40) #for cable sishen 1
+            axs[0].set_xlim(0, 300) #for hydraulic GT Aitik
+            axs[0].set_ylim(50, 90) #for hydraulic GT Aitik
             axs[0].grid()
             axs[0].set_ylabel('Pixels')
             axs[0].set_xlabel('Hours')
@@ -1059,16 +1069,18 @@ while 1:
             image = cv2.imread( path2wmsDir + imageName)
 
 
-        
+        currentIndex+=5
 
         images.imshow(image)
 
+        #plt.draw()
+        #plt.pause(1e-17)
+        #plt.pause(10)
 
-        fig.savefig('/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_Sishen_cable/PH01_2800/preFigs/' + str(currentIndex) + '.png', dpi=200)
+        fig.savefig('/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik_Komatsu_SH1142_PC5500_2019-02-26_to_2019-03-10/preFigs/' + str(currentIndex) + '.png', dpi=200)
 
         #fig.savefig('/media/hooman/961293e3-04a5-40c5-afc0-2b205d0a7067/WM_PROJECT/algorithmDev/wmAlgo_usingWearLandmarsk_optical_hydraulics/try1/wmdlLogs_aitik_Komatsu_SH1142_PC5500_2019-02-26_to_2019-03-10/preFigs/' + str(len(smoothed2Lengths)) + '.png', dpi=200)
 
-        currentIndex+=5
 
     else:
         break
